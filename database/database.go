@@ -37,7 +37,9 @@ func Init() {
 		dbname,
 		password,
 	)
-	DB, err := pgx.Connect(context.Background(), dsn)
+	var err error
+	// Make sure not to shadow your global - just assign with = - don't initialise a new variable and assign with :=
+	DB, err = pgx.Connect(context.Background(), dsn)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Gagal terhubung dengan database %v\n", err)
 	}
@@ -48,5 +50,4 @@ func Init() {
 		fmt.Fprintf(os.Stderr, "Gagal ping ygy %v\n", err)
 	}
 	fmt.Println("berhasil ping")
-	defer DB.Close(context.Background())
 }

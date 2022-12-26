@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"go-pgx/database"
 )
 
@@ -11,6 +12,7 @@ type Blacklisted struct {
 }
 
 func AddBlacklisted(b *Blacklisted) error {
+	fmt.Println(database.DB)
 	_, err := database.DB.Exec(context.Background(), "insert into blacklisted(username, email) values ($1, $2)", b.Username, b.Email)
 	return err
 }
