@@ -38,6 +38,7 @@ func Init() {
 		password,
 	)
 	var err error
+
 	// Make sure not to shadow your global - just assign with = - don't initialise a new variable and assign with :=
 	DB, err = pgx.Connect(context.Background(), dsn)
 	if err != nil {
