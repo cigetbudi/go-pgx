@@ -20,7 +20,7 @@ func Register(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": "berhasil membuat postingan baru"})
+	ctx.JSON(http.StatusOK, gin.H{"message": "berhasil mendaftar akun"})
 }
 
 func Login(ctx *gin.Context) {
