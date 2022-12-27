@@ -15,6 +15,9 @@ func InitRoutes() *gin.Engine {
 	post := r.Group("/post")
 	post.Use(middleware.JwtAuthMiddleware())
 	post.POST("/", CreatePost)
+	post.POST("/like/:id", LikePost)
+	post.POST("/unlike/:id", UnlikePost)
+	post.GET("/likes/:id", GetLikesCount)
 
 	return r
 }
