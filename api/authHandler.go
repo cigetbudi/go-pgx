@@ -10,35 +10,48 @@ import (
 
 func Register(ctx *gin.Context) {
 	u := model.User{}
+	res := model.Response{}
+
 	if err := ctx.ShouldBindJSON(&u); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "mohon untuk melengkapi semua isian"})
+		res.StatusCode = "01"
+		res.Description = err.Error()
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
 	err := model.AddUser(&u)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		res.StatusCode = "01"
+		res.Description = err.Error()
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": "berhasil mendaftar akun"})
+	res.StatusCode = "00"
+	res.Description = "berhasil mendaftar akun"
+	ctx.JSON(http.StatusOK, res)
 }
 
 func Login(ctx *gin.Context) {
 	u := model.User{}
+	res := model.Response{}
 	if err := ctx.ShouldBindJSON(&u); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "mohon untuk melengkapi semua isian"})
+		res.StatusCode = "01"
+		res.Description = err.Error()
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
 	logCount, err := model.CheckLoginAttemp(u.Username)
 	if err != nil {
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+		res.StatusCode = "01"
+		res.Description = err.Error()
+		ctx.JSON(http.StatusBadRequest, res)
+		return
 	}
 	if logCount > 3 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "akun anda terkunci, silahkan hubungi admin untuk proses pembukaan"})
+		res.StatusCode = "01"
+		res.Description = "akun anda terkunci, mohon menghubungi admin"
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
@@ -48,10 +61,18 @@ func Login(ctx *gin.Context) {
 		if err != nil {
 			log.Fatal()
 		}
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "username atau password tidak sesuai"})
+		res.StatusCode = "01"
+		res.Description = "username atau password tidak sesuai"
+		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, token)
+	t := model.TokenResp{
+		Token: token,
+	}
 
+	res.StatusCode = "00"
+	res.Description = "berhasil login"
+	res.Data = t
+	ctx.JSON(http.StatusOK, res)
 }

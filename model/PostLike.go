@@ -13,6 +13,10 @@ type PostLike struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type CountLike struct {
+	Likes uint `json:"likes"`
+}
+
 func AddLike(pl *PostLike) error {
 	var err error
 	_, err = database.DB.Exec(context.Background(), "INSERT INTO postlikes (post_id, user_id, created_at) values ($1, $2, $3)", pl.PostID, pl.UserID, pl.CreatedAt)
@@ -33,7 +37,7 @@ func RemoveLike(pl *PostLike) error {
 
 func GetLikesCount(pl *PostLike) uint {
 	var count uint
-	err := database.DB.QueryRow(context.Background(), "SELECT COUNT(user_id) FROM postlikes WHERE post_id = $1 ", pl.PostID).Scan(&count)
+	err := database.DB.QueryRow(context.Background(), "SELECT COUNT(user_id) FROM postlikes WHERE post_id = $1 AND deleted_at IS NULL ", pl.PostID).Scan(&count)
 	if err != nil {
 		return 0
 	}
